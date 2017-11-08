@@ -1,0 +1,202 @@
+import React from "react";
+import { View } from "react-native";
+import { List, Text } from "antd-mobile";
+import * as StyleUtil from "../util/StyleUtil";
+import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
+import LabelWithInputSingleLineNormalNoBorderComponent from "../component/LabelWithInputSingleLineNormalNoBorderComponent";
+import BaseComponent from "./BaseComponent";
+import * as ViewUtil from "../util/ViewUtil";
+import * as StringUtil from "../util/StringUtil";
+import * as SecretAsync from "../api/common/SecretAsync";
+import BaseCommon from "../common/BaseCommon";
+import MyButtonComponent from "../component/MyButtonComponent";
+import MyViewComponent from "../component/MyViewComponent";
+import MyScrollViewComponent from "../component/MyScrollViewComponent";
+import * as PressOnlyOnceUtil from "../util/PressOnlyOnceUtil";
+import * as ColorUtil from "../util/ColorUtil";
+import * as ApiUtil from "../api/common/ApiUtil";
+
+export default class ModifyPassPage extends BaseComponent {
+    constructor(props) {
+        super(props);
+        this.baseCommon = new BaseCommon({ ...props, });
+
+        this.state = {
+            // ...this.state,
+
+            passwordNow : '',
+            password : '',
+            password2 : '',
+        };
+    }
+
+    componentDidMount() {
+        super.componentDidMount();
+        this.baseCommon.componentDidMount();
+        // console.log('componentDidMount');
+    }
+
+    componentWillMount() {
+        super.componentWillMount();
+        this.baseCommon.componentWillMount();
+        // console.log('componentWillMount');
+    }
+
+    componentWillUnmount() {
+        super.componentWillUnmount();
+        this.baseCommon.componentWillUnmount();
+        // console.log('componentWillUnmount');
+    }
+
+    render() {
+        return (
+            <MyViewComponent style={{ backgroundColor : ColorUtil.bgGray }}>
+
+                <HeaderNormalWithRightButtonComponent
+                    textCenter="Reset Password"
+                    _leftBtnShouldShow={true}
+
+                />
+
+                <MyScrollViewComponent
+                    keyboardShouldPersistTaps='always'
+                    // keyboardDismissMode={'on-drag'}
+                    showsVerticalScrollIndicator={false}
+
+                    contentContainerStyle={{
+                        justifyContent : 'center',
+                        alignItems : 'stretch',
+                    }}>
+
+                    <View style={StyleUtil.gStyles.gCardBgWhite}>
+                        <List>
+                            <List.Item>
+
+                                <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'Old Password    '}
+                                                                                 _type={'password'}
+                                                                                 _inputValue={this.state.passwordNow}
+                                                                                 _onChange={(value) => {
+                                                                                     this.baseCommon.mounted && this.setState({ passwordNow : value });
+                                                                                 }}
+                                />
+                            </List.Item>
+
+                            <List.Item>
+
+                                <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'New Password    '} _inputPlaceHolder={'Length >= 6'}
+                                                                                 _type={'password'}
+                                                                                 _inputValue={this.state.password}
+                                                                                 _onChange={(value) => {
+                                                                                     this.baseCommon.mounted && this.setState({ password : value });
+                                                                                 }}
+                                />
+                            </List.Item>
+
+                            <List.Item>
+
+                                <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'Verify Password'} _inputPlaceHolder={'Length >= 6'}
+                                                                                 _type={'password'}
+                                                                                 _inputValue={this.state.password2}
+                                                                                 _onChange={(value) => {
+                                                                                     this.baseCommon.mounted && this.setState({ password2 : value });
+                                                                                 }}
+                                />
+                            </List.Item>
+
+                        </List>
+
+                        <MyButtonComponent
+                            style={[ StyleUtil.gStyles.gButtonBlueDefault, {
+                                marginBottom : 20,
+                                marginTop : 40,
+                            }, ]}
+                            onPress={() => {
+                                PressOnlyOnceUtil.onPress(() => {
+                                    this.onResetPassPressed();
+                                });
+                            }}
+                        >
+                            <Text> Reset </Text>
+                        </MyButtonComponent>
+
+                    </View>
+
+                </MyScrollViewComponent>
+
+            </MyViewComponent>
+        );
+    }
+
+    checkInfo() {
+
+        if (this.state.passwordNow == '' || StringUtil.trim(this.state.passwordNow).length == 0) {
+            ViewUtil.showToast('Input Old Password');
+            return false;
+        }
+
+        if (this.state.password == '' || StringUtil.trim(this.state.password).length < 6) {
+            ViewUtil.showToast('Input New Password length >= 6');
+            return false;
+        }
+        if (this.state.password2 == '' || StringUtil.trim(this.state.password2).length < 6) {
+            ViewUtil.showToast('Input Verify Password length >= 6');
+            return false;
+        }
+        if (this.state.password != this.state.password2) {
+            ViewUtil.showToast('Input Password Different');
+            return;
+        }
+
+        return true;
+    }
+
+    onResetPassPressed() {
+
+        if (!this.checkInfo()) {
+            return;
+        }
+
+        ViewUtil.showToastLoading();
+
+        let bodyObj = {
+            api_name : 'home.login.uppassword',
+            password : this.state.passwordNow,
+            newpassword : this.state.password,
+        };
+        SecretAsync.postWithCommonErrorShow((jsonObj) => {
+            this.onResetPassCallback(jsonObj);
+        }, bodyObj);
+
+        // var bodyObj = {
+        //     [URLConf.http.API_NAME] : URLConf.http.PARAM_API_USER__USER_CHANGE_PASSWORD,
+        //     [URLConf.http.PARAM_OLD_USER_PASSWORD] : this.state.passwordNow,
+        //     [URLConf.http.PARAM_NEW_USER_PASSWORD] : this.state.password,
+        // };
+        //
+        // UserApi.modifyPass(bodyObj, (jsonObj) => {
+        //     this.onResetPassCallback(jsonObj);
+        // });
+
+    }
+
+    onResetPassCallback(jsonObj) {
+        if (jsonObj.code != ApiUtil.http.ERROR_CODE_SUCCESS_0) {
+            ViewUtil.dismissToastLoading();
+            //处理自定义异常
+            SecretAsync.onCustomExceptionNormal(jsonObj);
+            return;
+        }
+
+        ViewUtil.dismissToastLoading();
+
+        // alert(jsonObj);
+        // alert(StringUtil.object2Json(jsonObj));
+
+        ViewUtil.showToast('Reset Success');
+        ViewUtil.popAllAndToLogin();
+        // Actions.Success();
+
+    }
+
+}
+
