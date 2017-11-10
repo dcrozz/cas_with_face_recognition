@@ -2,7 +2,7 @@
  * Created by nick on 2017/6/27.
  */
 import React from "react";
-import { Alert, NativeAppEventEmitter } from "react-native";
+import {Alert, NativeAppEventEmitter} from "react-native";
 
 import AMapLocation from "react-native-smart-amap-location";
 import PropTypes from "prop-types";
@@ -21,11 +21,11 @@ export default class AMapLocationUtil {
     }
 
     static propTypes = {
-        _onRequestLocationOk : PropTypes.func,
+        _onRequestLocationOk: PropTypes.func,
     };
 
     static defaultProps = {
-        _onRequestLocationOk : () => {
+        _onRequestLocationOk: () => {
         },
     };
 
@@ -33,8 +33,8 @@ export default class AMapLocationUtil {
         console.log('componentDidMount amapLocationMy');
         let amapOptions = null;
         amapOptions = {
-            onceLocation : true,
-            mockEnable : false,
+            onceLocation: true,
+            mockEnable: false,
         };
 
         // setMockEnable default true;
@@ -62,13 +62,16 @@ export default class AMapLocationUtil {
             Alert.alert(`错误代码: ${result.error.code}, 错误信息: ${result.error.localizedDescription}`);
             TmpDataUtil.curLatitude = 0;
             TmpDataUtil.curLongitude = 0;
+            TmpDataUtil.curAddress = '';
         }
         else {
             if (result.formattedAddress) {
                 // Alert.alert(`格式化地址 = ${result.formattedAddress}`);
+                TmpDataUtil.curAddress = result.formattedAddress;
             }
             else {
                 // Alert.alert(`纬度 = ${result.coordinate.latitude}, 经度 = ${result.coordinate.longitude}`);
+                TmpDataUtil.curAddress = '';
             }
 
             TmpDataUtil.curLatitude = result.coordinate.latitude;
@@ -85,7 +88,18 @@ export default class AMapLocationUtil {
 
     //单次定位并返回逆地理编码信息
     _showReGeocode() {
-        AMapLocation.getReGeocode();
+        // AMapLocation.getReGeocode();
+        this.componentWillUnmount();
+        this.componentDidMount();
+
+        if (false == TmpDataUtil.isRequestLocation) {
+            TmpDataUtil.isRequestLocation = true;
+            setTimeout(() => {
+                this.componentWillUnmount();
+                TmpDataUtil.isRequestLocation = false;
+            }, 15000);
+            AMapLocation.getReGeocode();
+        }
     }
 
     //单次定位并返回地理编码信息

@@ -29,7 +29,7 @@ let person_data = {
 const image_picker_options = {
     title: 'Select Photo',
     takePhotoButtonTitle: 'Take Photo...',
-    // chooseFromLibraryButtonTitle: 'Choose from Library...',
+    chooseFromLibraryButtonTitle: '',
     cameraType: 'back',
     mediaType: 'photo',
     maxWidth: 480,
@@ -170,13 +170,14 @@ export default class IndexPage extends BaseComponent {
         let bodyObj = {};
         TmpDataUtil.curLongitude = '';
         TmpDataUtil.curLatitude = '';
+        TmpDataUtil.curAddress = '';
         this.amapLocationUtil = new AMapLocationUtil({
             _onRequestLocationOk : () => {
                 LOG(22);
                 LOG(TmpDataUtil.curLatitude);
             }
         });
-        this.amapLocationUtil._showLocation();
+        this.amapLocationUtil._showReGeocode();
     }
 
     render() {
@@ -302,6 +303,19 @@ export default class IndexPage extends BaseComponent {
                                 >
                                     <Text> Checked-In Lectures </Text>
                                 </MyButtonComponent>
+
+                                <MyButtonComponent
+                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
+                                        marginBottom : 20,
+                                        marginTop : 40,
+                                    }, ]}
+                                    type={'primary'}
+                                    onPress={() => {
+                                        this._upLoadFace();
+                                    }}
+                                >
+                                    <Text> Upload Face </Text>
+                                </MyButtonComponent>
                             </MyViewComponent>
                         }
 
@@ -316,19 +330,6 @@ export default class IndexPage extends BaseComponent {
                             }}
                         >
                             <Text> Modify Password </Text>
-                        </MyButtonComponent>
-
-                        <MyButtonComponent
-                            style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                marginBottom : 20,
-                                marginTop : 40,
-                            }, ]}
-                            type={'primary'}
-                            onPress={() => {
-                                this._upLoadFace();
-                            }}
-                        >
-                            <Text> Upload Face </Text>
                         </MyButtonComponent>
 
                         <MyButtonComponent
