@@ -5,6 +5,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!--*************************高德地图-定位所需要权限*************************-->
     <!-- Normal Permissions 不需要运行时注册 -->
     <!--获取运营商信息，用于支持提供运营商信息相关的接口-->

@@ -15,6 +15,27 @@ import PropTypes from "prop-types";
 import * as ConstantUtil from "../util/ConstantUtil";
 import * as SecretAsync from "../api/common/SecretAsync";
 import * as ApiUtil from "../api/common/ApiUtil";
+import Requestor from './Requestor';
+
+var ImagePicker = require('react-native-image-picker');
+let face_api_base_url = 'https://westcentralus.api.cognitive.microsoft.com';
+const api_key = '1bbe9de7486c44da8afefa78cbdaa277';
+let persongroup_data = {
+    name: 'persongroup_name'
+}
+let person_data = {
+    name: 'alex'
+}
+const image_picker_options = {
+    title: 'Select Photo',
+    takePhotoButtonTitle: 'Take Photo...',
+    // chooseFromLibraryButtonTitle: 'Choose from Library...',
+    cameraType: 'back',
+    mediaType: 'photo',
+    maxWidth: 480,
+    quality: 1,
+    noData: false,
+};
 
 export default class IndexPage extends BaseComponent {
 
@@ -32,7 +53,18 @@ export default class IndexPage extends BaseComponent {
         super(props);
         this.baseCommon = new BaseCommon({ ...props, backPress : (e) => this.onBackPress(e) });
         // 初始状态
-        this.state = {};
+        this.state = {
+            name: '',
+            photo_style: {
+                width: 480,
+                height: 480
+            },
+            photo: null,
+            similar_photo: null,
+            message: '',
+            person_id: '',
+            persistedFaceId: ''
+        };
     }
 
     onBackPress(e) {
@@ -119,15 +151,17 @@ export default class IndexPage extends BaseComponent {
     }
 
     onPressSignScan() {
-        this.onPressSignGPS();
 
-        let bodyObj = {};
-        Actions.ShowScanPage({
-            onReadData : (value) => {
-                console.log(value);
-                this.onOkScan(value);
-            }
-        });
+            this.onPressSignGPS();
+
+            let bodyObj = {};
+            Actions.ShowScanPage({
+                onReadData : (value) => {
+                    console.log(value);
+                    this.onOkScan(value);
+                }
+            });
+
 
     }
 
@@ -291,6 +325,19 @@ export default class IndexPage extends BaseComponent {
                             }, ]}
                             type={'primary'}
                             onPress={() => {
+                                this._upLoadFace();
+                            }}
+                        >
+                            <Text> Upload Face </Text>
+                        </MyButtonComponent>
+
+                        <MyButtonComponent
+                            style={[ StyleUtil.gStyles.gButtonBlueDefault, {
+                                marginBottom : 20,
+                                marginTop : 40,
+                            }, ]}
+                            type={'primary'}
+                            onPress={() => {
                                 ViewUtil.popAllAndToLogin();
                             }}
                         >
@@ -304,6 +351,166 @@ export default class IndexPage extends BaseComponent {
             </MyViewComponent>
         );
     }
+
+    _pickImage() {
+
+        ImagePicker.showImagePicker(image_picker_options, (response) => {
+
+            if (response.error) {
+                alert('Error getting the image. Please try again.');
+            } else {
+
+                let source = {uri: response.uri};
+
+                this.setState({
+                    photo_style: {
+                        width: response.width,
+                        height: response.height
+                    },
+                    photo: source,
+                    photo_data: response.data
+                });
+                this._createPersonGroup();
+            }
+        });
+    }
+
+    _createPersonGroup() {
+
+        Requestor.request(
+            face_api_base_url + '/face/v1.0/persongroups/' + gUserInfo.user_name,
+            'PUT',
+            api_key,
+            JSON.stringify(persongroup_data)
+        )
+            .then(function (res) {
+                // console.log(res);
+                alert('Person Group Created!');
+            });
+
+        Requestor.request(
+            face_api_base_url + '/face/v1.0/persongroups/' + gUserInfo.user_name + '/persons',
+            'POST',
+            api_key,
+            JSON.stringify(person_data)
+        )
+            .then(
+                (res) => {
+                    console.log(res['personId']);
+
+                    this.setState({
+                        person_id: res['personId']
+                    });
+                    this._addFaceToPersonGroup();
+                }
+
+            )
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    }
+
+    _addFaceToPersonGroup() {
+
+        var user_data = {
+            name: this.state.name,
+            filename: this.state.photo.uri
+        };
+
+        Requestor.upload(
+            face_api_base_url + '/face/v1.0/persongroups/' + gUserInfo.user_name + '/persons/' + this.state.person_id + '/persistedFaces',
+            api_key,
+            this.state.photo_data,
+            {
+                userData: JSON.stringify(user_data)
+            }
+        )
+            .then((res) => {
+                console.log(res);
+
+                alert('Face Photo Upload!');
+
+                this.setState({
+                    persistedFaceId: res['persistedFaceId']
+                });
+
+                alert('Face was added to person group!');
+
+            });
+
+    }
+
+    _upLoadFace(){
+        this._pickImage();
+        // this._createPersonGroup();
+        // this._addFaceToPersonGroup();
+    }
+
+    _verifyFace() {
+
+        ImagePicker.showImagePicker(image_picker_options, (response) => {
+
+            if (response.error) {
+                alert('Error getting the image. Please try again.');
+            } else {
+
+                let source = {uri: response.uri};
+
+                this.setState({
+                    photo_style: {
+                        width: response.width,
+                        height: response.height
+                    },
+                    photo: source,
+                    photo_data: response.data
+                });
+            }
+        });
+
+        Requestor.upload(
+            face_api_base_url + '/face/v1.0/detect',
+            api_key,
+            this.state.photo_data
+        )
+            .then((facedetect_res) => {
+                console.log(facedetect_res);
+
+                let face_id = facedetect_res[0].faceId;
+
+                let data = {
+                    faceId: face_id,
+                    personId: this.state.person_id,
+                    personGroupId: gUserInfo.user_name
+                }
+
+                Requestor.request(
+                    face_api_base_url + '/face/v1.0/verify',
+                    'POST',
+                    api_key,
+                    JSON.stringify(data)
+                )
+                    .then((verify_res) => {
+
+                        console.log(verify_res);
+
+                        let result = verify_res.isIdentical;
+                        let confidece = verify_res.confidence;
+
+                        console.log(result);
+
+                        if(result === true){
+                            this.onPressSignScan();
+                        }else{
+                            alert('Face Authentication Failed');
+                        }
+
+                    });
+
+            });
+
+    }
+
 
 }
 
