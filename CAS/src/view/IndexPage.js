@@ -1,5 +1,5 @@
 import React from "react";
-import { BackHandler, Text } from "react-native";
+import {BackHandler, Text} from "react-native";
 import * as StyleUtil from "../util/StyleUtil";
 import BaseComponent from "./BaseComponent";
 import * as ViewUtil from "../util/ViewUtil";
@@ -8,7 +8,7 @@ import * as ColorUtil from "../util/ColorUtil";
 import MyViewComponent from "../component/MyViewComponent";
 import MyScrollViewComponent from "../component/MyScrollViewComponent";
 import MyButtonComponent from "../component/MyButtonComponent";
-import { Actions } from "react-native-router-flux";
+import {Actions} from "react-native-router-flux";
 import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
 import AMapLocationUtil from "../util/AMapLocationUtil";
 import PropTypes from "prop-types";
@@ -20,12 +20,7 @@ import Requestor from './Requestor';
 var ImagePicker = require('react-native-image-picker');
 let face_api_base_url = 'https://westcentralus.api.cognitive.microsoft.com';
 const api_key = '1bbe9de7486c44da8afefa78cbdaa277';
-let persongroup_data = {
-    name: 'persongroup_name'
-}
-let person_data = {
-    name: 'alex'
-}
+
 const image_picker_options = {
     title: 'Select Photo',
     takePhotoButtonTitle: 'Take Photo...',
@@ -40,18 +35,18 @@ const image_picker_options = {
 export default class IndexPage extends BaseComponent {
 
     static propTypes = {
-        role : PropTypes.string, //
+        role: PropTypes.string, //
 
     };
 
     static defaultProps = {
-        role : '2', //1-老师，2-学生
+        role: '2', //1-老师，2-学生
     };
 
     // 构造
     constructor(props) {
         super(props);
-        this.baseCommon = new BaseCommon({ ...props, backPress : (e) => this.onBackPress(e) });
+        this.baseCommon = new BaseCommon({...props, backPress: (e) => this.onBackPress(e)});
         // 初始状态
         this.state = {
             name: '',
@@ -137,11 +132,11 @@ export default class IndexPage extends BaseComponent {
 
         //发布课程
         let bodyObj = {
-            api_name : 'student.sign.scanning',
-            qrcode : value,
-            longitude : TmpDataUtil.curLongitude,
-            latitude : TmpDataUtil.curLatitude,
-            address : '1',
+            api_name: 'student.sign.scanning',
+            qrcode: value,
+            longitude: TmpDataUtil.curLongitude,
+            latitude: TmpDataUtil.curLatitude,
+            address: '1',
 
         };
         SecretAsync.postWithCommonErrorShow((jsonObj) => {
@@ -152,15 +147,15 @@ export default class IndexPage extends BaseComponent {
 
     onPressSignScan() {
 
-            this.onPressSignGPS();
+        this.onPressSignGPS();
 
-            let bodyObj = {};
-            Actions.ShowScanPage({
-                onReadData : (value) => {
-                    console.log(value);
-                    this.onOkScan(value);
-                }
-            });
+        let bodyObj = {};
+        Actions.ShowScanPage({
+            onReadData: (value) => {
+                console.log(value);
+                this.onOkScan(value);
+            }
+        });
 
 
     }
@@ -172,7 +167,7 @@ export default class IndexPage extends BaseComponent {
         TmpDataUtil.curLatitude = '';
         TmpDataUtil.curAddress = '';
         this.amapLocationUtil = new AMapLocationUtil({
-            _onRequestLocationOk : () => {
+            _onRequestLocationOk: () => {
                 LOG(22);
                 LOG(TmpDataUtil.curLatitude);
             }
@@ -182,7 +177,7 @@ export default class IndexPage extends BaseComponent {
 
     render() {
         return (
-            <MyViewComponent style={{ backgroundColor : ColorUtil.bgGray, flex : 1, }}>
+            <MyViewComponent style={{backgroundColor: ColorUtil.bgGray, flex: 1,}}>
 
                 {ViewUtil.getViewStatusBar()}
                 <HeaderNormalWithRightButtonComponent textCenter={'Main Page'}
@@ -200,130 +195,130 @@ export default class IndexPage extends BaseComponent {
                     showsVerticalScrollIndicator={false}
 
                     contentContainerStyle={{
-                        justifyContent : 'center',
-                        alignItems : 'stretch',
+                        justifyContent: 'center',
+                        alignItems: 'stretch',
                     }}>
 
                     <MyViewComponent
-                        style={[ StyleUtil.gStyles.gPadding20, StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite, StyleUtil.gStyles.gCardBgWhite ]}>
+                        style={[StyleUtil.gStyles.gPadding20, StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite, StyleUtil.gStyles.gCardBgWhite]}>
 
-                        <Text style={{ textAlign : 'center', }}> {gUserInfo.user_name} </Text>
+                        <Text style={{textAlign: 'center',}}> {gUserInfo.user_name} </Text>
 
                         {
                             gUserInfo && gUserInfo.role == '1'
                                 ? <MyViewComponent>
 
-                                <MyButtonComponent
-                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                        marginBottom : 20,
-                                        marginTop : 40,
-                                    }, ]}
-                                    type={'primary'}
-                                    onPress={() => {
-                                        Actions.PublicCoursePage();
-                                    }}
-                                >
-                                    <Text> Take Attendance </Text>
-                                </MyButtonComponent>
-                                <MyButtonComponent
-                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                        marginBottom : 20,
-                                        marginTop : 40,
-                                    }, ]}
-                                    type={'primary'}
-                                    onPress={() => {
-                                        Actions.MyCourseListManagePage({ typePage : ConstantUtil.typePageReleasedCourse });
-                                    }}
-                                >
-                                    <Text> Checking-In Lecture </Text>
-                                </MyButtonComponent>
-                                <MyButtonComponent
-                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                        marginBottom : 20,
-                                        marginTop : 40,
-                                    }, ]}
-                                    type={'primary'}
-                                    onPress={() => {
-                                        Actions.MyCourseListManagePage({ typePage : ConstantUtil.typePageManageMyCourse });
-                                    }}
-                                >
-                                    <Text> My Courses </Text>
-                                </MyButtonComponent>
+                                    <MyButtonComponent
+                                        style={[StyleUtil.gStyles.gButtonBlueDefault, {
+                                            marginBottom: 20,
+                                            marginTop: 40,
+                                        },]}
+                                        type={'primary'}
+                                        onPress={() => {
+                                            Actions.PublicCoursePage();
+                                        }}
+                                    >
+                                        <Text> Take Attendance </Text>
+                                    </MyButtonComponent>
+                                    <MyButtonComponent
+                                        style={[StyleUtil.gStyles.gButtonBlueDefault, {
+                                            marginBottom: 20,
+                                            marginTop: 40,
+                                        },]}
+                                        type={'primary'}
+                                        onPress={() => {
+                                            Actions.MyCourseListManagePage({typePage: ConstantUtil.typePageReleasedCourse});
+                                        }}
+                                    >
+                                        <Text> Checking-In Lecture </Text>
+                                    </MyButtonComponent>
+                                    <MyButtonComponent
+                                        style={[StyleUtil.gStyles.gButtonBlueDefault, {
+                                            marginBottom: 20,
+                                            marginTop: 40,
+                                        },]}
+                                        type={'primary'}
+                                        onPress={() => {
+                                            Actions.MyCourseListManagePage({typePage: ConstantUtil.typePageManageMyCourse});
+                                        }}
+                                    >
+                                        <Text> My Courses </Text>
+                                    </MyButtonComponent>
 
-                            </MyViewComponent>
+                                </MyViewComponent>
                                 : <MyViewComponent>
-                                <MyButtonComponent
-                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                        marginBottom : 20,
-                                        marginTop : 40,
-                                    }, ]}
-                                    type={'primary'}
-                                    onPress={() => {
-                                        this.onPressSignScan();
-                                    }}
-                                >
-                                    <Text> Scan to Check In </Text>
-                                </MyButtonComponent>
+                                    <MyButtonComponent
+                                        style={[StyleUtil.gStyles.gButtonBlueDefault, {
+                                            marginBottom: 20,
+                                            marginTop: 40,
+                                        },]}
+                                        type={'primary'}
+                                        onPress={() => {
+                                            this._verifyFace();
+                                        }}
+                                    >
+                                        <Text> Scan to Check In </Text>
+                                    </MyButtonComponent>
 
-                                {/*<MyButtonComponent*/}
-                                {/*style={[ StyleUtil.gStyles.gButtonBlueDefault, {*/}
-                                {/*marginBottom : 20,*/}
-                                {/*marginTop : 40,*/}
-                                {/*}, ]}*/}
-                                {/*type={'primary'}*/}
-                                {/*onPress={() => {*/}
-                                {/*this.onPressSignGPS();*/}
-                                {/*}}*/}
-                                {/*>*/}
-                                {/*<Text> GPS签到 </Text>*/}
-                                {/*</MyButtonComponent>*/}
+                                    {/*<MyButtonComponent*/}
+                                    {/*style={[ StyleUtil.gStyles.gButtonBlueDefault, {*/}
+                                    {/*marginBottom : 20,*/}
+                                    {/*marginTop : 40,*/}
+                                    {/*}, ]}*/}
+                                    {/*type={'primary'}*/}
+                                    {/*onPress={() => {*/}
+                                    {/*this.onPressSignGPS();*/}
+                                    {/*}}*/}
+                                    {/*>*/}
+                                    {/*<Text> GPS签到 </Text>*/}
+                                    {/*</MyButtonComponent>*/}
 
-                                <MyButtonComponent
-                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                        marginBottom : 20,
-                                        marginTop : 40,
-                                    }, ]}
-                                    type={'primary'}
-                                    onPress={() => {
-                                        Actions.MyCourseListManagePage({ typePage : ConstantUtil.typePageSelectSigningCourse });
-                                    }}
-                                >
-                                    <Text> Checking-In Lectures </Text>
-                                </MyButtonComponent>
+                                    <MyButtonComponent
+                                        style={[StyleUtil.gStyles.gButtonBlueDefault, {
+                                            marginBottom: 20,
+                                            marginTop: 40,
+                                        },]}
+                                        type={'primary'}
+                                        onPress={() => {
+                                            Actions.MyCourseListManagePage({typePage: ConstantUtil.typePageSelectSigningCourse});
+                                        }}
+                                    >
+                                        <Text> Checking-In Lectures </Text>
+                                    </MyButtonComponent>
 
-                                <MyButtonComponent
-                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                        marginBottom : 20,
-                                        marginTop : 40,
-                                    }, ]}
-                                    type={'primary'}
-                                    onPress={() => {
-                                        Actions.MyCourseListManagePage({ typePage : ConstantUtil.typePageSelectSignedCourse });
-                                    }}
-                                >
-                                    <Text> Checked-In Lectures </Text>
-                                </MyButtonComponent>
+                                    <MyButtonComponent
+                                        style={[StyleUtil.gStyles.gButtonBlueDefault, {
+                                            marginBottom: 20,
+                                            marginTop: 40,
+                                        },]}
+                                        type={'primary'}
+                                        onPress={() => {
+                                            Actions.MyCourseListManagePage({typePage: ConstantUtil.typePageSelectSignedCourse});
+                                        }}
+                                    >
+                                        <Text> Checked-In Lectures </Text>
+                                    </MyButtonComponent>
 
-                                <MyButtonComponent
-                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                        marginBottom : 20,
-                                        marginTop : 40,
-                                    }, ]}
-                                    type={'primary'}
-                                    onPress={() => {
-                                        this._upLoadFace();
-                                    }}
-                                >
-                                    <Text> Upload Face </Text>
-                                </MyButtonComponent>
-                            </MyViewComponent>
+                                    <MyButtonComponent
+                                        style={[StyleUtil.gStyles.gButtonBlueDefault, {
+                                            marginBottom: 20,
+                                            marginTop: 40,
+                                        },]}
+                                        type={'primary'}
+                                        onPress={() => {
+                                            this._upLoadFace();
+                                        }}
+                                    >
+                                        <Text> Upload Face </Text>
+                                    </MyButtonComponent>
+                                </MyViewComponent>
                         }
 
                         <MyButtonComponent
-                            style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                marginBottom : 20,
-                                marginTop : 40,
-                            }, ]}
+                            style={[StyleUtil.gStyles.gButtonBlueDefault, {
+                                marginBottom: 20,
+                                marginTop: 40,
+                            },]}
                             type={'primary'}
                             onPress={() => {
                                 Actions.ModifyPassPage();
@@ -333,10 +328,10 @@ export default class IndexPage extends BaseComponent {
                         </MyButtonComponent>
 
                         <MyButtonComponent
-                            style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                marginBottom : 20,
-                                marginTop : 40,
-                            }, ]}
+                            style={[StyleUtil.gStyles.gButtonBlueDefault, {
+                                marginBottom: 20,
+                                marginTop: 40,
+                            },]}
                             type={'primary'}
                             onPress={() => {
                                 ViewUtil.popAllAndToLogin();
@@ -378,16 +373,30 @@ export default class IndexPage extends BaseComponent {
 
     _createPersonGroup() {
 
+        let persongroup_data = {
+            name: gUserInfo.user_name
+        }
+
         Requestor.request(
             face_api_base_url + '/face/v1.0/persongroups/' + gUserInfo.user_name,
             'PUT',
             api_key,
             JSON.stringify(persongroup_data)
         )
-            .then(function (res) {
-                // console.log(res);
-                alert('Person Group Created!');
-            });
+            .then(
+                (res) => {
+                    console.log('groupID:' + res);
+                    // alert('Person Group Created!');
+
+                    this._createPerson();
+                });
+    }
+
+    _createPerson() {
+
+        let person_data = {
+            name: gUserInfo.user_name
+        }
 
         Requestor.request(
             face_api_base_url + '/face/v1.0/persongroups/' + gUserInfo.user_name + '/persons',
@@ -397,19 +406,18 @@ export default class IndexPage extends BaseComponent {
         )
             .then(
                 (res) => {
-                    console.log(res['personId']);
+                    console.log(res);
 
                     this.setState({
                         person_id: res['personId']
                     });
+
                     this._addFaceToPersonGroup();
                 }
-
             )
             .catch(function (error) {
                 console.log(error);
             });
-
     }
 
     _addFaceToPersonGroup() {
@@ -436,20 +444,13 @@ export default class IndexPage extends BaseComponent {
                     persistedFaceId: res['persistedFaceId']
                 });
 
-                alert('Face was added to person group!');
+                // alert('Face was added to person group!');
 
             });
 
     }
 
-    _upLoadFace(){
-        this._pickImage();
-        // this._createPersonGroup();
-        // this._addFaceToPersonGroup();
-    }
-
-    _verifyFace() {
-
+    _upLoadFace() {
         ImagePicker.showImagePicker(image_picker_options, (response) => {
 
             if (response.error) {
@@ -466,52 +467,82 @@ export default class IndexPage extends BaseComponent {
                     photo: source,
                     photo_data: response.data
                 });
+                this._createPersonGroup();
             }
         });
-
-        Requestor.upload(
-            face_api_base_url + '/face/v1.0/detect',
-            api_key,
-            this.state.photo_data
-        )
-            .then((facedetect_res) => {
-                console.log(facedetect_res);
-
-                let face_id = facedetect_res[0].faceId;
-
-                let data = {
-                    faceId: face_id,
-                    personId: this.state.person_id,
-                    personGroupId: gUserInfo.user_name
-                }
-
-                Requestor.request(
-                    face_api_base_url + '/face/v1.0/verify',
-                    'POST',
-                    api_key,
-                    JSON.stringify(data)
-                )
-                    .then((verify_res) => {
-
-                        console.log(verify_res);
-
-                        let result = verify_res.isIdentical;
-                        let confidece = verify_res.confidence;
-
-                        console.log(result);
-
-                        if(result === true){
-                            this.onPressSignScan();
-                        }else{
-                            alert('Face Authentication Failed');
-                        }
-
-                    });
-
-            });
-
     }
 
+    _verifyFace() {
 
+        ImagePicker.showImagePicker(image_picker_options, (response) => {
+
+                if (response.error) {
+                    alert('Error getting the image. Please try again.');
+                } else {
+
+                    let source = {uri: response.uri};
+
+                    this.setState({
+                        photo_style: {
+                            width: response.width,
+                            height: response.height
+                        },
+                        photo: source,
+                        photo_data: response.data
+                    });
+
+                    Requestor.upload(
+                        face_api_base_url + '/face/v1.0/detect',
+                        api_key,
+                        this.state.photo_data
+                    )
+                        .then(
+                            (facedetect_res) => {
+
+                                if (facedetect_res.length != 0) {
+                                    console.log(facedetect_res);
+
+                                    let face_id = facedetect_res[0].faceId;
+
+                                    let data = {
+                                        faceId: face_id,
+                                        personId: this.state.person_id,
+                                        personGroupId: gUserInfo.user_name
+                                    }
+
+                                    Requestor.request(
+                                        face_api_base_url + '/face/v1.0/verify',
+                                        'POST',
+                                        api_key,
+                                        JSON.stringify(data)
+                                    )
+                                        .then((verify_res) => {
+
+                                            console.log(verify_res);
+
+                                            let result = verify_res.isIdentical;
+                                            let confidece = verify_res.confidence;
+
+                                            console.log(result);
+
+                                            if (result === true) {
+                                                alert('Face Authentication Success');
+                                                this.onPressSignScan();
+                                            } else {
+                                                alert('Face Authentication Failed');
+                                            }
+                                        })
+
+                                } else {
+
+                                    alert('Cannot find the face');
+
+                                }
+                            })
+                }
+
+            }
+        );
+    }
 }
 
